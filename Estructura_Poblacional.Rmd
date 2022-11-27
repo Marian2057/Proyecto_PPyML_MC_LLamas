@@ -25,35 +25,49 @@ knitr::include_graphics("QUETA.jpg")
 
 #BASE DE DATOS 
 ```{r}
-BD_General <- read_excel("BD_General.xlsx", 
-    col_types = c("numeric", "text", "numeric", 
-        "text", "text", "text", "text", "text", 
-        "numeric", "numeric", "numeric", 
-        "numeric", "text", "numeric", "text", 
-        "text", "text", "text", "numeric", 
-        "text", "text", "numeric", "numeric", 
-        "text", "text", "text", "text", "numeric", 
-        "text"), skip = 2)
+BD_General <- read_excel("BD_General_Cuencas.xlsx", 
+         # col_types = c("numeric", "text", "numeric", 
+         # "text", "text", "text", "text", "text", 
+         # "numeric", "numeric", "numeric", 
+         # "numeric", "text", "numeric", "text", 
+         # "text", "text", "text", "numeric", 
+         # "text", "text", "numeric", "numeric", 
+         # "text", "text", "text", "text", "numeric", 
+         # "text","text"), 
+        skip = 2)
+  
+
 BD_General
 ```
 #Composición de la tropa por Edad
 ```{r}
 BD_General |> 
-  group_by(Edad_r) |> 
-  summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+    group_by(Edad_r) |> 
+    summarise(cantidad = n()) |> 
+    mutate(proporcion = cantidad/sum(cantidad)*100,) %>%
 gt() %>%
-  tab_header(title = "Cantidad y Porcentaje de animales según edad")
+    fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
+tab_header(title = "Cantidad y Porcentaje de animales según edad")
+
+
 ```
+
 
 #Gráfico de la Composición de la tropa según Edad
 ```{r}
 BD_General |> 
   group_by(Edad_r) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100,) %>%
+  
 ggplot() +
-  geom_col(aes(x = Edad_r, y = proporcion, fill = Edad_r),position = "dodge", alpha = 0.8)
+  geom_col(aes(x = Edad_r, y = proporcion, fill = Edad_r),position = "dodge", alpha = 0.8)+
+  geom_text(aes(x = Edad_r, y = proporcion,label = proporcion), position =position_stack(), size=4, vjust=2, hjust=0.5, col="black")
 ```
 
 #Composición de la tropa según Sexo
@@ -63,6 +77,12 @@ BD_General |>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
 gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
 ```
 
@@ -73,6 +93,12 @@ BD_General |>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
 gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
 ```
 
@@ -85,6 +111,12 @@ BD_General |>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
   gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frecuencia y Porcentaje de Tipo de Mecha")
 ```
 
@@ -96,6 +128,12 @@ BD_General |>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
 gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frecuencia y Porcentaje de Color de Fibra")
 ```
 
@@ -109,6 +147,7 @@ BD_EP
 group_by(BD_EP) %>%
   summarise_all(mean, na.rm = TRUE) %>%
   gt() %>%
+  
 tab_header(title = "Promedio de Medidas Zoométricas y Condición Corporal")
 ```
 
@@ -117,6 +156,7 @@ tab_header(title = "Promedio de Medidas Zoométricas y Condición Corporal")
 group_by(BD_EP) %>%
   summarise_all(sd, na.rm = TRUE) %>%
   gt() %>%
+  
   tab_header(title = "Desvío Estándar de Medidas Zoométricas y Condición Corporal")
 ```
 
@@ -140,6 +180,12 @@ BD_General |>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
 gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frecuencia y Porcentaje de Finura de Fibra")
 ```
 
@@ -150,6 +196,12 @@ BD_General|>
   summarise(cantidad = n()) |> 
   mutate(proporcion = cantidad/sum(cantidad)*100) %>%
 gt() %>%
+  fmt_number(
+    columns =c(proporcion),
+    decimals = 2,
+    dec_mark = ",",
+    sep_mark = "."
+    )%>%
   tab_header(title = "Frecuencia y Porcentaje de Morfotipo")
 ```
 
