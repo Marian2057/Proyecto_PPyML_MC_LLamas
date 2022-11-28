@@ -4,6 +4,8 @@ author: "Claudia1930"
 date: "2022-11-23"
 output: 
  html_document:
+   toc: TRUE
+   toc_float: TRUE
    code_folding: hide
 ---
 
@@ -15,6 +17,7 @@ library(tidyverse)
 library(rstatix)
 library(gt)
 library(plotrix)
+library(RcmdrPlugin.NMBU)
 
 ```
 
@@ -22,8 +25,17 @@ library(plotrix)
 knitr::include_graphics("QUETA.jpg")
 ```
 
+# Introducción
 
-#BASE DE DATOS 
+La base de datos con la cual se trabajará, corresponde a un proceso de investigación/extensión con el objetivo de determinar la Estructura Poblacional de las llamas en la Argentina.
+
+La Estructura Poblacional es una herramienta demográfica que consiste en realizar un relevamiento poblacional basándose en caracteres zootécnicos de los animales presentes en diferentes tropas a nivel de una determinada área y/o región.  La metodología mencionada tiene como principal objetivo determinar las principales características de “LA LLAMA ARGENTINA” y su POTENCIAL PRODUCTIVO.
+En este caso, la caracterización y cuantificación de la oferta poblacional se realiza en la comunidades Aborígenes de la Provincia de Jujuy, más precisamente en los departamentos de Rinconada, Cochinoca y Yavi.
+
+
+
+## Exploración de los datos
+
 ```{r}
 BD_General <- read_excel("BD_General.xlsx", 
     col_types = c("numeric", "text", "numeric", 
@@ -36,7 +48,7 @@ BD_General <- read_excel("BD_General.xlsx",
         "text"), skip = 2)
 BD_General
 ```
-#Composición de la tropa por Edad
+### Composición de la tropa por Edad
 ```{r}
 BD_General |> 
   group_by(Edad_r) |> 
@@ -46,7 +58,7 @@ gt() %>%
   tab_header(title = "Cantidad y Porcentaje de animales según edad")
 ```
 
-#Gráfico de la Composición de la tropa según Edad
+### Gráfico de la Composición de la tropa según Edad
 ```{r}
 BD_General |> 
   group_by(Edad_r) |> 
@@ -56,7 +68,7 @@ ggplot() +
   geom_col(aes(x = Edad_r, y = proporcion, fill = Edad_r),position = "dodge", alpha = 0.8)
 ```
 
-#Composición de la tropa según Sexo
+### Composición de la tropa según Sexo
 ```{r}
 BD_General |> 
   group_by(Sexo) |> 
@@ -66,7 +78,7 @@ gt() %>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
 ```
 
-#Composición de la tropa según Edad y Sexo
+### Composición de la tropa según Edad y Sexo
 ```{r}
 BD_General |> 
   group_by(Sexo, Edad_r) |> 
@@ -77,7 +89,7 @@ gt() %>%
 ```
 
 
-#Frecuencia y Porcentaje de tipo de Mecha
+### Frecuencia y Porcentaje de tipo de Mecha
 
 ```{r}
 BD_General |>
@@ -89,7 +101,7 @@ BD_General |>
 ```
 
 
-#Frecuencia y Porcentaje de Color
+### Frecuencia y Porcentaje de Color
 ```{r}
 BD_General |>
   group_by(CM_r) |> 
@@ -99,12 +111,12 @@ gt() %>%
   tab_header(title = "Frecuencia y Porcentaje de Color de Fibra")
 ```
 
-#Tabla de Medidas Zoométricas y Condición Corporal
+### Tabla de Medidas Zoométricas y Condición Corporal
 ```{r}
-BD_EP <- select(BD_General, "PT", "PH", "A", "Condición Corporal")
+BD_EP <- select(BD_General, "PT", "PH", "A", "Condicion_Corporal")
 BD_EP
 ```
-#Promedio de Medidas Zoometrícas y Condición Corporal
+### Promedio de Medidas Zoometrícas y Condición Corporal
 ```{r}
 group_by(BD_EP) %>%
   summarise_all(mean, na.rm = TRUE) %>%
@@ -112,7 +124,7 @@ group_by(BD_EP) %>%
 tab_header(title = "Promedio de Medidas Zoométricas y Condición Corporal")
 ```
 
-#Desvío Estándar de Medidas Zoométricas y Condición Corporal
+### Desvío Estándar de Medidas Zoométricas y Condición Corporal
 ```{r}
 group_by(BD_EP) %>%
   summarise_all(sd, na.rm = TRUE) %>%
@@ -120,7 +132,7 @@ group_by(BD_EP) %>%
   tab_header(title = "Desvío Estándar de Medidas Zoométricas y Condición Corporal")
 ```
 
-#Varianza de Medidas Zoométricas y Condición Corporal
+### Varianza de Medidas Zoométricas y Condición Corporal
 ```{r}
 group_by(BD_EP) %>%
   summarise_all(var, na.rm = TRUE) %>%
@@ -128,12 +140,12 @@ group_by(BD_EP) %>%
   tab_header(title = "Varianza de Medidas Zoométricas y Condición Corporal")
 ```
 
-#Error Estándar de Medidas Zoométricas y Condición Corporal
+### Error Estándar de Medidas Zoométricas y Condición Corporal
 ```{r}
-std.error(BD_VT)
+#std.error(BD_VT)
 ```
 
-#Frecuencia y Porcentaje de Finura de Fibra
+### Frecuencia y Porcentaje de Finura de Fibra
 ```{r}
 BD_General |>
   group_by(FM) |> 
@@ -143,7 +155,7 @@ gt() %>%
   tab_header(title = "Frecuencia y Porcentaje de Finura de Fibra")
 ```
 
-#Frecuencia y Porcentaje de Morfotipo
+### Frecuencia y Porcentaje de Morfotipo
 ```{r}
 BD_General|>
   group_by(Morfotipo) |> 
@@ -153,9 +165,9 @@ gt() %>%
   tab_header(title = "Frecuencia y Porcentaje de Morfotipo")
 ```
 
-#Tabla de Finura de Fibra y Condición Corporal
+### Tabla de Finura de Fibra y Condición Corporal
 ```{r}
-BD_EP1 <- select(BD_General, "Condición Corporal", "DM FLc2022", "Sexo")
+BD_EP1 <- select(BD_General, "Condicion_Corporal", "DM_FLc2022", "Sexo")
 BD_EP1
 ```
 
@@ -179,11 +191,11 @@ BD_EP1 |>
   geom_col(aes(fill = Sexo))
   
 ```
-#En el gráfico precedente se observa que el 86,8% de los datos corresponden a la categoria "Hembras". Sin embargo se debe centrar el análisis en la calidad de fibra de los machos que representan el 6,91% , esto debido a que cada macho reproductor sirve en promedio a 30 hembras.
+### En el gráfico precedente se observa que el 86,8% de los datos corresponden a la categoria "Hembras". Sin embargo se debe centrar el análisis en la calidad de fibra de los machos que representan el 6,91% , esto debido a que cada macho reproductor sirve en promedio a 30 hembras.
 
-#Analizar la Condición Corporal de los machos
+### Analizar la Condición Corporal de los machos
 ```{r}
-BD_EP2 <- select(BD_General, "Condición Corporal", "DM FLc2022")
+BD_EP2 <- select(BD_General, "Condicion_Corporal", "DM_FLc2022")
 BD_EP2
 ```
 ```{r}
@@ -196,5 +208,5 @@ group_by(BD_EP2) %>%
 
 
 
-#La Condición Corporal de los machos se puede calificar de ............, la importancia del análisis es poder concluir si se encuentran en condiciones de servir como promedio de 30 hembras.
+La Condición Corporal de los machos se puede calificar de ............, la importancia del análisis es poder concluir si se encuentran en condiciones de servir como promedio de 30 hembras.
 
