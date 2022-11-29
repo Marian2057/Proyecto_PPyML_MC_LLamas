@@ -17,7 +17,7 @@ library(tidyverse)
 library(rstatix)
 library(gt)
 library(plotrix)
-library(RcmdrPlugin.NMBU)
+#library(RcmdrPlugin.NMBU)
 
 ```
 
@@ -45,7 +45,7 @@ BD_General <- read_excel("BD_General.xlsx",
         "text", "text", "text", "numeric", 
         "text", "text", "numeric", "numeric", 
         "text", "text", "text", "text", "numeric", 
-        "text"), skip = 2)
+        "text"))
 BD_General
 ```
 ### Composición de la tropa por Edad
@@ -142,7 +142,7 @@ group_by(BD_EP) %>%
 
 ### Error Estándar de Medidas Zoométricas y Condición Corporal
 ```{r}
-#std.error(BD_VT)
+std.error(BD_EP)
 ```
 
 ### Frecuencia y Porcentaje de Finura de Fibra
@@ -195,17 +195,27 @@ BD_EP1 |>
 
 ### Analizar la Condición Corporal de los machos
 ```{r}
-BD_EP2 <- select(BD_General, "Condicion_Corporal", "DM_FLc2022")
+BD_EP2 <- select(BD_General, "Condicion_Corporal", "DM_FLc2022", "Edad")
 BD_EP2
 ```
 ```{r}
-group_by(BD_EP2) %>%
-  summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
-  gt() %>%
-  tab_header(title = "Promedio de Condición Corporal, Finura de Fibra")
+ggplot(BD_General, aes(x=Edad_r, y=DM_FLc2022)) +
+  geom_point(aes(color = Edad_r))
+ 
+  
 ```
 
+```{r}
+ggplot(BD_General, aes(x=Edad_r, y=DM_FLc2022)) +
+  geom_boxplot()
+```
+
+#Análisis de la Relación entre Edad y Diámetro de la fibra
+```{r}
+ggplot(BD_General, aes(x=Edad_r, y=DM_FLc2022)) +
+  geom_violin(aes(color = Edad_r, fill = Edad_r))
+```
+#
 
 
 La Condición Corporal de los machos se puede calificar de ............, la importancia del análisis es poder concluir si se encuentran en condiciones de servir como promedio de 30 hembras.
