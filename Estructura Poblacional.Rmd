@@ -70,7 +70,9 @@ Análisis de la población muestra
 BD_General |> 
   group_by(Edad_r) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100,
+      proporcion=round(proporcion, 2)   )%>%
+
 gt() %>%
   tab_header(title = "Cantidad y Porcentaje de animales según edad")
 ```
@@ -80,7 +82,8 @@ gt() %>%
 BD_General |> 
   group_by(Edad_r) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, 
+         proporcion=round(proporcion, 2) ) %>%
 ggplot() +
   geom_col(aes(x = Edad_r, y = proporcion, fill = Edad_r),position = "dodge", alpha = 0.8)
 ```
@@ -90,7 +93,7 @@ ggplot() +
 BD_General |> 
   group_by(Sexo) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, proporcion=round(proporcion, 2) ) %>%
 gt() %>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
 ```
@@ -100,7 +103,7 @@ gt() %>%
 BD_General |> 
   group_by(Sexo, Edad_r) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, proporcion=round(proporcion, 2) ) %>%
 gt() %>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
 ```
@@ -117,7 +120,7 @@ gt() %>%
 BD_General |>
   group_by(FM) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, proporcion=round(proporcion, 2) ) %>%
 gt() %>%
   tab_header(title = "Frecuencia y Porcentaje de Finura de Fibra")
 ```
@@ -134,7 +137,7 @@ BD_EP1
 BD_EP1 |> 
   group_by(Sexo) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, proporcion=round(proporcion, 2) ) %>%
 gt() %>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
  
@@ -145,7 +148,7 @@ gt() %>%
 BD_EP1 |> 
   group_by(Sexo) |> 
   summarise(cantidad = n()) |> 
-  mutate(proporcion = cantidad/sum(cantidad)*100) %>%
+  mutate(proporcion = cantidad/sum(cantidad)*100, proporcion=round(proporcion, 2) ) %>%
  ggplot(aes(x = cantidad, y = proporcion)) +
   geom_col(aes(fill = Sexo))
   
