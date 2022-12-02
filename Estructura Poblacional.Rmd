@@ -48,6 +48,23 @@ BD_General <- read_excel("BD_General.xlsx",
         "text"))
 BD_General
 ```
+Se seleccionan las variables sobre las cuales se aplicará PCA
+```{r}
+BD_EP3 <- BD_General %>% 
+  # Existen datos faltantes. Son pocos departamentos (baja población). 
+  # Se eliminan para no imputar valores y distorcionar el análisis. 
+  #filter(!is.na(ind01)) %>% 
+  # Se seleccionan las variables relevantes, renommbrandolas. 
+  dplyr::select( Edad_r, Sexo, Condicion_Corporal, DM_FLc2022)%>% 
+  rename(Edad_r= Edad_Real, Diametro_Fibra = DM_FLc2022)  
+BD_EP3
+```
+Se cuenta con 4 variables y 1474 observaciones, donde cada observación corresponde a la descripción de cada llama segun el sexo, la edad, la condicion corporal y la calidad de la fibra
+
+
+Análisis de la población muestra
+
+
 ### Composición de la tropa por Edad
 ```{r}
 BD_General |> 
