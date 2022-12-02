@@ -113,6 +113,28 @@ gt() %>%
 
 
 
+<<<<<<< HEAD
+=======
+### Desvío Estándar de Medidas Zoométricas y Condición Corporal
+```{r}
+group_by(BD_EP) %>%
+  summarise_all(sd, na.rm = TRUE) %>%
+  gt() %>%
+  tab_header(title = "Desvío Estándar de Medidas Zoométricas y Condición Corporal")
+```
+
+### Varianza de Medidas Zoométricas y Condición Corporal
+```{r}
+group_by(BD_EP) %>%
+  summarise_all(var, na.rm = TRUE) %>%
+  gt() %>%
+  tab_header(title = "Varianza de Medidas Zoométricas y Condición Corporal")
+```
+
+### Error Estándar de Medidas Zoométricas y Condición Corporal
+```{r}
+std.error(BD_EP)
+>>>>>>> 219a04739f864197ea61b5db0e36707a79a65288
 ```
 
 ### Frecuencia y Porcentaje de Finura de Fibra
