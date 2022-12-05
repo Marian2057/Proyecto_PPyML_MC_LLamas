@@ -511,9 +511,20 @@ res.dist <- get_dist(BD_EP1, stand = FALSE,
 # Visualizando un subconjunto de la matriz de distancia
 round(as.matrix(res.dist)[1:5, 1:5], 1)
 ```
+```{r}
+fviz_dist(res.dist)
+```
+
+
 
 ```{r}
-my_data <- scale(BD_EP1[, -5])
+fviz_dist(res.dist,
+#get_clust_tendency(res.dist, n = 50,
+                   gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+```
+
+```{r}
+my_data <- scale(res.dist[, -5])
 get_clust_tendency(my_data, n = 50,
                    gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
 ```
