@@ -20,14 +20,6 @@ library(plotrix)
 library(RcmdrPlugin.NMBU)
 library(NbClust)
 library(cluster)
-library(factoextra)
-library(DataExplorer)
-library(ggplot2)
-library(funModeling)
-library(tidyr)
-library(corrplot)
-library(PerformanceAnalytics)
-
 ```
 
 ```{r}
@@ -43,7 +35,7 @@ En este caso, la caracterización y cuantificación de la oferta poblacional se 
 
 
 
-# I. LECTURA DE DATOS
+## Exploración de los datos
 
 ```{r}
 BD_General <- read_excel("BD_General.xlsx", 
@@ -57,35 +49,19 @@ BD_General <- read_excel("BD_General.xlsx",
         "text"))
 BD_General
 ```
-# II ANÁLISIS EXPLORATORIO
-
-Se seleccionan las variables que vamos a trabajar
+Se seleccionan las variables sobre las cuales se aplicará PCA
 ```{r}
 BD_EP1 <- BD_General %>% 
   
   dplyr::select( Edad_r, Sexo, Condicion_Corporal, DM_FLc2022, FM)%>% 
-  rename(Edad_Real= Edad_r, Diametro_Fibra = DM_FLc2022, Finura_Fibra=FM)
-
-  BD_EP1 <- na.omit(BD_EP1)
+  rename(Edad_Real= Edad_r, Diametro_Fibra = DM_FLc2022, Finura_Fibra=FM) 
+  
 BD_EP1
 
 
 ```
 Se cuenta con 4 variables y 1474 observaciones, donde cada observación corresponde a la descripción de cada llama segun el sexo, la edad, la condicion corporal y la calidad de la fibra
 
-#summarize del dataset, distribución, boxplot
-```{r}
-summary(BD_EP1)
-```
-
-Usamos la libreria DataExplorer(Cui, 2020) para obtener una grafica que detecte los % de datos perdidos
-
-```{r}
-plot_missing(BD_EP1, ggtheme=theme_bw())+
-               labs(tittle="Datos perdidos por variable",
-                    y="Datos peridos",
-                    x="Variables") 
-```
 
 
 Análisis de la población muestra
@@ -103,7 +79,9 @@ gt() %>%
   tab_header(title = "Cantidad y Porcentaje de animales según edad")
 BD_EAg
 ```
+```{r}
 
+```
 
 ### Gráfico de la Composición de la tropa según Edad
 ```{r}
@@ -137,6 +115,7 @@ gt() %>%
 ```
 
 
+
 ### Tabla de Finura de Fibra y Condición Corporal
 
 ```{r}
@@ -155,7 +134,7 @@ gt() %>%
   tab_header(title = "Frencuencia y Porcentaje de Machos, Hembras y Capones")
   
 ```
-
+std.error(BD_EP)
 ```{r}
 BD_EP4 |> 
   group_by(Sexo) |> 
@@ -171,21 +150,21 @@ BD_EP4 |>
 ```{r}
 
 
-# BD_EP2 <- dplyr::select(BD_EP1, "Condicion_Corporal", "Diametro_Fibra", "Edad_Real")%>%
-#   group_by(Edad_Real)%>%
-#   summarise(Frecuencia=length(Condicion_Corporal), 
-#             Media_CC=mean(Condicion_Corporal,na.rm = TRUE),Media_CC=round(Media_CC, 2), 
-#             Media_DF=mean(Diametro_Fibra,na.rm = TRUE),Media_DF=round(Media_DF, 2),
-#             Desvio_CC=sd(Condicion_Corporal,na.rm = TRUE),Desvio_CC=round(Desvio_CC, 2),
-#             Desvio_DF=sd(Diametro_Fibra,na.rm = TRUE),Desvio_DF=round(Desvio_DF, 2),
-#             Max_CC=max(Condicion_Corporal,na.rm = TRUE),Max_CC=round(Max_CC, 2),
-#             Max_DF=max(Diametro_Fibra,na.rm = TRUE),Max_DF=round(Max_DF, 2),
-#             Min_CC=min(Condicion_Corporal,na.rm = TRUE),Min_CC=round(Min_CC, 2),
-#             Min_DF=min(Diametro_Fibra,na.rm = TRUE),Min_DF=round(Min_DF, 2),
-#             Varianza_CC=var(Condicion_Corporal,na.rm = TRUE),Varianza_CC=round(Varianza_CC, 2),
-#             Varianza_DF=var(Diametro_Fibra,na.rm = TRUE),Varianza_DF=round(Varianza_DF, 2))
-#   
-# BD_EP2
+BD_EP2 <- dplyr::select(BD_EP1, "Condicion_Corporal", "Diametro_Fibra", "Edad_Real")%>%
+  group_by(Edad_Real)%>%
+  summarise(Frecuencia=length(Condicion_Corporal), 
+            Media_CC=mean(Condicion_Corporal,na.rm = TRUE),Media_CC=round(Media_CC, 2), 
+            Media_DF=mean(Diametro_Fibra,na.rm = TRUE),Media_DF=round(Media_DF, 2),
+            Desvio_CC=sd(Condicion_Corporal,na.rm = TRUE),Desvio_CC=round(Desvio_CC, 2),
+            Desvio_DF=sd(Diametro_Fibra,na.rm = TRUE),Desvio_DF=round(Desvio_DF, 2),
+            Max_CC=max(Condicion_Corporal,na.rm = TRUE),Max_CC=round(Max_CC, 2),
+            Max_DF=max(Diametro_Fibra,na.rm = TRUE),Max_DF=round(Max_DF, 2),
+            Min_CC=min(Condicion_Corporal,na.rm = TRUE),Min_CC=round(Min_CC, 2),
+            Min_DF=min(Diametro_Fibra,na.rm = TRUE),Min_DF=round(Min_DF, 2),
+            Varianza_CC=var(Condicion_Corporal,na.rm = TRUE),Varianza_CC=round(Varianza_CC, 2),
+            Varianza_DF=var(Diametro_Fibra,na.rm = TRUE),Varianza_DF=round(Varianza_DF, 2))
+  
+BD_EP2
 ```
 ```{r}
 BD_EP2 <- dplyr::select(BD_EP1, "Condicion_Corporal", "Diametro_Fibra", "Edad_Real")
@@ -201,8 +180,6 @@ ggplot(BD_EP1, aes(x=Edad_Real, y=Diametro_Fibra)) +
   
 ```
 # creando intervalos de la variable Condición Corporal
-
-
 ```{r}
 CC1 <- cut(BD_EP1$Condicion_Corporal, breaks = 4)
 CC1
@@ -225,10 +202,13 @@ ggplot(BD_EP1, aes(x=Edad_Real, y=Diametro_Fibra)) +
 ggplot(BD_EP1, aes(x=Edad_Real, y=Diametro_Fibra)) +
   geom_violin(aes(color = Edad_Real, fill = Edad_Real))
 ```
- La Condición Corporal de los machos se puede calificar de ............, la importancia del análisis es poder concluir si se encuentran en condiciones de servir como promedio de 30 hembras.
+#
 
 
- Analizar la Condición Corporal de los machos
+La Condición Corporal de los machos se puede calificar de ............, la importancia del análisis es poder concluir si se encuentran en condiciones de servir como promedio de 30 hembras.
+
+
+### Analizar la Condición Corporal de los machos
 
 ```{r}
 BD_EP2 <- dplyr::select(BD_EP1, "Condicion_Corporal", "Diametro_Fibra")
@@ -245,8 +225,7 @@ group_by(Condicion_Corporal) %>%
   gt() %>%
   tab_header(title = "Promedio de Condición Corporal, Finura de Fibra")
 ```
-  
-## *****************************************Dataset
+  ## *****************************************Dataset
 ##ESTRUCTURA
 #visualizo dataset, primera impresión
 
@@ -266,9 +245,6 @@ attr(BD_EP1,"class")
 ```
 
 
-
-
-## *****************************************EDA & dataviz
 ##DESCRIPCIÓN
 #columnas, nombres de variables
 
@@ -305,7 +281,10 @@ hist(BD_EP1$Diametro_Fibra,
 
 ```
 
-
+#summarize del dataset, distribución, boxplot
+```{r}
+summary(BD_EP1)
+```
 
 
 #calculo medias
@@ -404,7 +383,7 @@ ggplot(BD_EP1, aes(Condicion_Corporal,Diametro_Fibra)
 # K-Means ya está incluido
 # fijo una semilla
 ```{r}
-set.seed(50)
+set.seed(900)
 ```
 # modelo con un k=2
 El codigo no corre porque hay un dato nulo en la columna diametro_fibra fila 74 y no sabemos como ignorar ese dato
@@ -453,7 +432,7 @@ BD_EP1Cluster5
 # Comparo 1 vector predicho y las etiquetas originales
 
 ```{r}
-table(BD_EP1Cluster2$cluster, BD_EP1$Condicion_Corporal, BD_EP1$Diametro_Fibra)
+table(BD_EP1Cluster2$cluster, BD_EP1$Finura_Fibra)
 clusplot(BD_EP1, BD_EP1Cluster2$cluster, color=T, shade=T, labels=0, lines=0)
 ```
 
@@ -461,22 +440,16 @@ clusplot(BD_EP1, BD_EP1Cluster2$cluster, color=T, shade=T, labels=0, lines=0)
 # K=3
 # Comparo 1 vector predicho y las etiquetas originales
 ```{r}
-table(BD_EP1Cluster3$cluster, BD_EP1$Condicion_Corporal, BD_EP1$Diametro_Fibra)
+table(BD_EP1Cluster3$cluster, BD_EP1$Finura_Fibra)
 clusplot(BD_EP1, BD_EP1Cluster3$cluster, color=T, shade=T, labels=0, lines=0)
 ```
 
 # K=5
 # Comparo 1 vector predicho y las etiquetas originales
 ```{r}
-table(BD_EP1Cluster5$cluster, BD_EP1$Condicion_Corporal, BD_EP1$Diametro_Fibra )
+table(BD_EP1Cluster5$cluster, BD_EP1$Finura_Fibra)
 clusplot(BD_EP1, BD_EP1Cluster5$cluster, color=T, shade=T, labels=0, lines=0)
 ```
-```{r}
-pam.res <- pam(BD_EP1, 5)
-# Visualize
-fviz_cluster(pam.res)
-```
-
 
 "Qué observamos?
  Todas están explicadas por igual?
@@ -499,113 +472,6 @@ for (i in 1:15){
 ```{r}
 plot(1:15, tot.withinss, type="b", pch=19)
 ```
-
-```{r}
-hist(BD_EP1) + theme_bw()
-```
   
-```{r}
-#Calculando la matriz de distancia euclidiana con la
-#funcion get_dist()
-res.dist <- get_dist(BD_EP1, stand = FALSE, 
-                     method = "euclidean")
-
-# Visualizando un subconjunto de la matriz de distancia
-round(as.matrix(res.dist)[1:5, 1:5], 1)
-```
-```{r}
-fviz_dist(res.dist)
-```
 
 
-
-```{r}
-fviz_dist(res.dist,
-#get_clust_tendency(res.dist, n = 50,
-                   gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
-```
-
-```{r}
-my_data <- scale(res.dist[, -5])
-get_clust_tendency(my_data, n = 50,
-                   gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
-```
-
-```{r}
-data("BD_EP1")
-#BD_EP1 <- na.omit(BD_EP1)
-my_data <- scale(BD_EP1)
-# 2. Compute dissimilarity matrix
-d <- dist(my_data, method = "euclidean")
-# Hierarchical clustering using Ward's method
-res.hc <- hclust(d, method = "ward.D2" )
-# Cut tree into 4 groups
-grp <- cutree(res.hc, k = 4)
-# Visualize
-plot(res.hc, cex = 0.6) # plot tree
-rect.hclust(res.hc, k = 4, border = 2:5) # add rectangle
-```
-
-```{r}
-res <- hcut(BD_EP1, k = 4, stand = TRUE)
-# Visualize
-fviz_dend(res, rect = TRUE, cex = 0.5,
-          k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"))
-```
-
-
-
-```{r}
-set.seed(123)
-res.nbclust <- NbClust(my_data, distance = "euclidean",
-                  min.nc = 2, max.nc = 10, 
-                  method = "complete", index ="all") 
-```
-
-***************************************Regresion**********************************************************
-### Coeficiente de correlación de Pearson entre las Variables Condicion_Corporal y DM_FLc2022
-```{r}
- chart.Correlation(BD_EP2)
-```
-#Existe una correlación negativa débil
-
-#Análisis de Correlación por Coeficiente de Sperman
-```{r}
-cor(BD_EP2, method = "spearman")
-```
-
-#Aplicación de cor.test a las variables
-
-```{r}
-cor.test(BD_EP2$Condicion_Corporal, BD_EP2$Diametro_Fibra, method = "spearman")
-```
-
-#Aplicación de shapiro.test a variable Condicion_Corporal
-
-```{r}
-shapiro.test(BD_EP2$Condicion_Corporal)
-```
-
-#Shapiro test de variable DM
-
-```{r}
-shapiro.test(BD_EP2$Diametro_Fibra)
-```
-#Las variables no tienen una distribución normal
-
-#Determinando correlaciónes
-```{r}
-BD_EP <- lm(BD_EP2$Condicion_Corporal ~BD_EP2$Diametro_Fibra , data = BD_EP2)
-summary(BD_EP2)
-```
-
-```{r}
-anova(BD_EP2)
-
-```
-
-#Verificación de Supuestos
-```{r}
-par(mfrow = c(2, 2))
-plot(BD_EP2)
-```

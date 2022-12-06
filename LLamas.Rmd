@@ -1,0 +1,121 @@
+---
+
+title: "**Análisis multivariado de características de las LLamas de Jujuy, Argentina**"
+author: "Claudia Oviedo,Marianela Pi"
+date: "1 de diciembre de 2022"
+output: 
+ html_document:
+   toc: TRUE
+   toc_float: TRUE
+   code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(dplyr)
+library(rstatix)
+library(plotrix)
+library(RcmdrPlugin.NMBU)
+library(tidyverse) # Manipulaci?n de datos y gr?ficos
+library(skimr) # An?lisis exploratorio de las variables
+library(gt) # Tablas
+library(kableExtra) # Tablas
+library(corrplot) # Matriz de correlaci?n
+library(RColorBrewer) # Paleta de colores
+library(psych) # Test de Bartlett 
+library(tidytext) # Labels en gr?ficos
+library(NbClust) # N?mero ?ptimo de clusters (Ward)
+library(factoextra) # N?mero ?ptimo de clusters (Kmeans)
+library(cowplot) # Gr?ficos m?ltiples
+library(patchwork) # Combinar ggplots
+library(rgdal) # Para trabajar con shapefiles
+library(sf) # Para trabajar con datos espaciales
+library(biscale) # Escala bivariada
+library(ggstatsplot) # Gr?ficos estad?sticos
+```
+
+```{r}
+#knitr::include_graphics("QUETA.jpg")
+```
+# **Introducción**
+
+La base de datos con la cual se trabajará, corresponde a un proceso de investigación/extensión con el objetivo de determinar la Estructura Poblacional de las llamas en la Argentina.
+
+La Estructura Poblacional es una herramienta demográfica que consiste en realizar un relevamiento poblacional basándose en caracteres zootécnicos de los animales presentes en diferentes tropas a nivel de una determinada área y/o región.  La metodolog??a mencionada tiene como principal objetivo determinar las principales caracter??sticas de “LA LLAMA ARGENTINA” y su POTENCIAL PRODUCTIVO.
+En este caso, la caracterización y cuantificación de la oferta poblacional se realiza en la comunidades Abor??genes de la Provincia de Jujuy, más precisamente en los departamentos de Rinconada, Cochinoca y Yavi.
+
+
+## **1. Librerias**
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(dplyr)
+library(rstatix)
+library(plotrix)
+library(RcmdrPlugin.NMBU)
+library(tidyverse) # Manipulaci?n de datos y gr?ficos
+library(skimr) # An?lisis exploratorio de las variables
+library(gt) # Tablas
+library(kableExtra) # Tablas
+library(corrplot) # Matriz de correlaci?n
+library(RColorBrewer) # Paleta de colores
+library(psych) # Test de Bartlett 
+library(tidytext) # Labels en gr?ficos
+library(NbClust) # N?mero ?ptimo de clusters (Ward)
+library(factoextra) # N?mero ?ptimo de clusters (Kmeans)
+library(cowplot) # Gr?ficos m?ltiples
+library(patchwork) # Combinar ggplots
+library(rgdal) # Para trabajar con shapefiles
+library(sf) # Para trabajar con datos espaciales
+library(biscale) # Escala bivariada
+library(ggstatsplot) # Gr?ficos estad?sticos
+```
+
+## **2. Desarrollo metodólogico**
+
+Se utilizan datos de características de las Llamas
+
+```{r}
+BD_General <- read_excel("BD_General.xlsx", )
+    # col_types = c("numeric", "text", "numeric", 
+    #     "text", "text", "text", "text", "text", 
+    #     "numeric", "numeric", "numeric", 
+    #     "numeric", "text", "numeric", "text", 
+    #     "text", "text", "text", "numeric", 
+    #     "text", "text", "numeric", "numeric", 
+    #     "text", "text", "text", "text", "numeric", 
+    #     "text"))
+BD_General
+```
+Se seleccionan las variables sobre las cuales se aplicará PCA
+```{r}
+BD_EP3 <- BD_General %>% 
+  # Existen datos faltantes. Son pocos departamentos (baja población). 
+  # Se eliminan para no imputar valores y distorcionar el análisis. 
+  #filter(!is.na(ind01)) %>% 
+  # Se seleccionan las variables relevantes, renommbrandolas. 
+  dplyr::select( Edad_r, Sexo, Condicion_Corporal, DM_FLc2022)%>% 
+  rename(Calidad_Fibra = DM_FLc2022)  
+BD_EP3
+```
+Se cuenta con 4 variables y 1474 observaciones, donde cada observación corresponde a la descripción de cada llama segun el sexo, la edad, la condicion corporal y la calidad de la fibra
+
+```{r}
+skim(BD_EP3) %>% rename(Variable = skim_variable) %>% 
+  dplyr::select(-complete_rate, -n_missing, -numeric.hist, -skim_type) %>% 
+  mutate(across(where(is.numeric),round, 2)) %>% 
+  rename(Promedio = numeric.mean, `Desvío estándar`=numeric.sd, 
+         p0=numeric.p0,p25=numeric.p25, Mediana=numeric.p50, 
+         p75=numeric.p75, p100=numeric.p100) %>% 
+  gt() %>% tab_header(title = md('**Características de las LLamas (Argentina)**'),
+                      subtitle = 'Distribución de las variables' ) %>% 
+  opt_align_table_header('left')
+```
+```{r}
+grupo <- BD_EP3 %>% 
+  dplyr::select(Condicion_Corporal,Edad_r)%>% 
+  group_by(Edad_r)%>% 
+  summarise(frecuencia=sum(Condicion_Corporal), Promedio = mean(Condicion_corporal))
+```
+
